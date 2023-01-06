@@ -1,10 +1,12 @@
-﻿using Domain;
+﻿using Domain.Entities;
 
 namespace Application.Intrefaces
 {
     public interface IMessageService
     {
-        Message GetMessageFromQueueById(int id);
-        void AddMessageToQueue(Message message);
+        Message GetMessage(int userId);
+        IEnumerable<Message> GetMessages(int userId, int messageCount);
+        void AddMessage(RawMessage rawMessage);
+        void AddMessages(IEnumerable<RawMessage> rawMessages);
     }
 }

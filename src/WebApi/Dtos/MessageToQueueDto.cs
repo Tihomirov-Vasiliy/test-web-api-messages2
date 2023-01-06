@@ -1,21 +1,22 @@
-﻿using Domain;
+﻿using Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebApi.Dtos
 {
     public class MessageToQueueDto
     {
-        public string Subject { get; set; }
-        public string Body { get; set; }
-        public ICollection<int> Recipients { get; set; }
+        [Required]
+        public string Subject { get; set; } 
 
-        public Message MapToMessage()
+        [Required]
+        public string Body { get; set; }
+
+        [Required]
+        public IList<int> Recipients { get; set; }
+
+        public RawMessage MapToRawMessage()
         {
-            return new Message
-            {
-                Subject = Subject,
-                Body = Body,
-                Recipients = Recipients
-            };
+            return new RawMessage { Subject = Subject, Body = Body, RecipientIds = Recipients };
         }
     }
 }
