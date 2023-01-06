@@ -34,7 +34,7 @@ namespace WebApi.Controllers
                 new { RecipientIds = createMessageDto.Recipients });
         }
 
-        [HttpGet("collections", Name = nameof(GetMessagesByRecipientId))]
+        [HttpGet("batch", Name = nameof(GetMessagesByRecipientId))]
         public ActionResult<IEnumerable<MessageFromQueueDto>> GetMessagesByRecipientId([Required][FromQuery] int rcpt, int messageCount = 1)
         {
             IEnumerable<Message> messages = _messageService.GetMessages(rcpt, messageCount);
@@ -46,25 +46,14 @@ namespace WebApi.Controllers
             return results;
         }
 
-        [HttpPost("collections", Name = nameof(AddMessagesToQueue))]
+        [HttpPost("batch", Name = nameof(AddMessagesToQueue))]
         public ActionResult AddMessagesToQueue([FromBody] IEnumerable<MessageToQueueDto> createMessageDtos)
         {
             List<RawMessage> messages = new List<RawMessage>();
             foreach (var createMessageDto in createMessageDtos)
                 messages.Add(createMessageDto.MapToRawMessage());
 
-            _messageService.AddMessages(messages);
-
-            //Creating List<int> to return ids in body for getting messages with user Ids and number of messages
-            Dictionary<int, int> idToNumberOfMessages = new Dictionary<int, int>();
-            foreach (var message in createMessageDtos)
-                foreach (var recepientId in message.Recipients)
-                {
-                    if (!idToNumberOfMessages.ContainsKey(recepientId))
-                        idToNumberOfMessages.Add(recepientId, 1);
-                    else
-                        idToNumberOfMessages[recepientId]++;
-                }
+            Dictionary<int, int> idToNumberOfMessages = _messageService.AddMessages(messages);
 
             return CreatedAtRoute(
                 nameof(GetMessageByRecipientId),

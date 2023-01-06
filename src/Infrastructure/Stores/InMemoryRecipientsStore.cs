@@ -39,6 +39,9 @@ namespace Infrastructure.Stores
 
         public IEnumerable<Message> GetMessagesByRecipientIdAndCount(int recipientId, int messageCount)
         {
+            if (messageCount <= 0)
+                throw new WrongMessageCountException($"Message Count value should be >= 1, actual value:{messageCount}");
+
             List<Message> messages = new List<Message>();
             Recipient recipient;
 

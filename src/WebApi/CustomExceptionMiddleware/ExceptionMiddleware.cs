@@ -31,6 +31,10 @@ namespace WebApi.CustomExceptionMiddleware
                     context.Response.StatusCode = 404;
                     errorMessage = exception.Message;
                     break;
+                case WrongMessageCountException:
+                    context.Response.StatusCode = 400;
+                    errorMessage = exception.Message;
+                    break;
                 default:
                     context.Response.StatusCode = 500;
                     errorMessage = $"Internal Server Error: something went wrong on the server";
