@@ -7,6 +7,7 @@ namespace Application.Intrefaces
         Message GetMessage(int userId);
         IEnumerable<Message> GetMessages(int userId, int messageCount);
         void AddMessage(RawMessage rawMessage);
-        void AddMessages(IEnumerable<RawMessage> rawMessages);
+        //Should return Dictionary with key: recipient id, value: number of messages from recipient
+        Dictionary<int, int> AddMessages(IEnumerable<RawMessage> rawMessages);
     }
 }

@@ -18,12 +18,22 @@ namespace Infrastructure.Services
             _memoryStore.AddMessageToQueue(rawMessage);
         }
 
-        public void AddMessages(IEnumerable<RawMessage> rawMessages)
+        public Dictionary<int, int> AddMessages(IEnumerable<RawMessage> rawMessages)
         {
+            //Creating List<int> to return ids in body for getting messages with user Ids and number of messages
+            Dictionary<int, int> idToNumberOfMessages = new Dictionary<int, int>();
             foreach (var rawMessage in rawMessages)
             {
                 _memoryStore.AddMessageToQueue(rawMessage);
+                foreach (var recepientId in rawMessage.RecipientIds)
+                {
+                    if (!idToNumberOfMessages.ContainsKey(recepientId))
+                        idToNumberOfMessages.Add(recepientId, 1);
+                    else
+                        idToNumberOfMessages[recepientId]++;
+                }
             }
+            return idToNumberOfMessages;
         }
 
         public Message GetMessage(int userId)

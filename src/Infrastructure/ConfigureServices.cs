@@ -6,7 +6,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ConfigureServices
     {
-        public static IServiceCollection AddInfrastructureSerices(this IServiceCollection services)
+        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
         {
             services.AddScoped<IMessageService, MessageServiceInMemory>();
             services.AddSingleton<InMemoryRecipientsStore>();
