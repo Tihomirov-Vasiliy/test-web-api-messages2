@@ -15,11 +15,17 @@ namespace Infrastructure.Services
 
         public void AddMessage(RawMessage rawMessage)
         {
+            if (rawMessage == null)
+                throw new ArgumentNullException("You can't add null message to queue");
+
             _memoryStore.AddMessageToQueue(rawMessage);
         }
 
         public Dictionary<int, int> AddMessages(IEnumerable<RawMessage> rawMessages)
         {
+            if (rawMessages == null || rawMessages.Count() == 0)
+                throw new ArgumentNullException("You can't add empty collection of messages to queue");
+
             //Creating List<int> to return ids in body for getting messages with user Ids and number of messages
             Dictionary<int, int> idToNumberOfMessages = new Dictionary<int, int>();
             foreach (var rawMessage in rawMessages)

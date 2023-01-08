@@ -36,7 +36,7 @@ namespace Infrastructure.Stores
                 throw new MessageNotFoundException($"Message for recipient with id:{recipientId} not found");
             }
         }
-
+        
         public IEnumerable<Message> GetMessagesByRecipientIdAndCount(int recipientId, int messageCount)
         {
             if (messageCount <= 0)
