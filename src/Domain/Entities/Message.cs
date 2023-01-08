@@ -13,5 +13,14 @@
             Subject = subject;
             Body = body;
         }
+        public override bool Equals(object? obj)
+        {
+            Message message = obj as Message;
+            if (obj == null)
+                return false;
+            if (Subject == message.Subject && Body == message.Body)
+                return true;
+            return false;
+        }
     }
 }
