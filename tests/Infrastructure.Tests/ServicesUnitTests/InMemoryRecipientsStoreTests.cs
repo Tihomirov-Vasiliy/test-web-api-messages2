@@ -75,6 +75,13 @@ namespace Infrastructure.Tests.ServicesUnitTests
         public void GetMessageByRecipientId_RecipientWithIdAndWithMessageExists_ReturnsMessage()
         {
             //Arrange
+            RawMessage rawMessage = new RawMessage()
+            {
+                Body = "body",
+                Subject = "subject",
+                RecipientIds = new List<int>() { 1 }
+            };
+            _store.AddMessageToQueue(rawMessage);
             Recipient recipient = new Recipient(1);
             Message actualMessage = new Message("subject", "body");
             recipient.Messages.Enqueue(actualMessage);

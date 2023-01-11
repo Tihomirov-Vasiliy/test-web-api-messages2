@@ -26,7 +26,7 @@ namespace Infrastructure.Services
             if (rawMessages == null || rawMessages.Count() == 0)
                 throw new ArgumentNullException("You can't add empty collection of messages to queue");
 
-            //Creating List<int> to return ids in body for getting messages with user Ids and number of messages
+            //Creating Dictionary<int> to return ids in body for getting messages with user Ids and number of messages
             Dictionary<int, int> idToNumberOfMessages = new Dictionary<int, int>();
             foreach (var rawMessage in rawMessages)
             {

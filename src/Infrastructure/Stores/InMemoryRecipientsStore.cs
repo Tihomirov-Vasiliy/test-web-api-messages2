@@ -5,18 +5,18 @@ namespace Infrastructure.Stores
 {
     public class InMemoryRecipientsStore
     {
-        public List<Recipient> Recipients { get; set; } = new List<Recipient>();
+        private List<Recipient> _recipients = new List<Recipient>();
 
         public void AddMessageToQueue(RawMessage rawMessage)
         {
             Recipient recipient;
 
-            foreach (var recipientId in rawMessage.RecipientIds)
+            foreach (int recipientId in rawMessage.RecipientIds)
             {
                 if ((recipient = GetRecipientById(recipientId)) == null)
                 {
                     recipient = new Recipient(recipientId);
-                    Recipients.Add(recipient);
+                    _recipients.Add(recipient);
                 }
                 recipient.Messages.Enqueue(new Message(rawMessage.Subject, rawMessage.Body));
             }
@@ -28,15 +28,14 @@ namespace Infrastructure.Stores
             if ((recipient = GetRecipientById(recipientId)) == null)
                 throw new MessageNotFoundException($"Message for recipient with id:{recipientId} not found");
 
-            if (recipient.Messages.TryDequeue(out Message recipienMessage))
-                return recipienMessage;
-            else
-            {
-                Recipients.Remove(recipient);
-                throw new MessageNotFoundException($"Message for recipient with id:{recipientId} not found");
-            }
+            Message message = recipient.Messages.Dequeue();
+
+            if (recipient.Messages.Count == 0)
+                _recipients.Remove(recipient);
+
+            return message;
         }
-        
+
         public IEnumerable<Message> GetMessagesByRecipientIdAndCount(int recipientId, int messageCount)
         {
             if (messageCount <= 0)
@@ -45,30 +44,25 @@ namespace Infrastructure.Stores
             List<Message> messages = new List<Message>();
             Recipient recipient;
 
-            recipient = GetRecipientById(recipientId);
-
-            if (recipient == null)
+            if ((recipient = GetRecipientById(recipientId)) == null)
                 throw new MessageNotFoundException($"Message for recipient with id:{recipientId} not found");
 
             for (int i = 0; i < messageCount; i++)
             {
-                if (recipient.Messages.TryDequeue(out Message recipientMessage))
-                    messages.Add(recipientMessage);
-                else if (i == 0)
+                Message message = recipient.Messages.Dequeue();
+                messages.Add(message);
+                if (recipient.Messages.Count == 0)
                 {
-                    Recipients.Remove(recipient);
-                    throw new MessageNotFoundException($"Message for recipient with id:{recipientId} not found");
-                }
-                else
+                    _recipients.Remove(recipient);
                     return messages;
+                }
             }
             return messages;
         }
 
         private Recipient GetRecipientById(int recipientId)
         {
-            return Recipients
-                .FirstOrDefault(r => r.Id == recipientId);
+            return _recipients.FirstOrDefault(r => r.Id == recipientId);
         }
     }
 }
